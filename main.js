@@ -163,7 +163,7 @@ function getCommonCharacters(values) {
     let char = values[0].charAt(i);
     let x = 1;
     while (x < values.length) {
-      if (values[x].charAt(i)===char) {
+      if (values[x].charAt(i) === char) {
         if (x === values.length - 1) {
           common_characters.push(char);
         }
@@ -196,7 +196,8 @@ function createGrammar() {
 }
 
 function displayTable() {
-  $element("llTableHead").innerHTML = "<th>FIRST</th><th>FOLLOW</th><th>Nonterminal</th>";
+  $element("llTableHead").innerHTML =
+    "<th>FIRST</th><th>FOLLOW</th><th>Nonterminal</th>";
 
   for (var i in terminals) {
     $element("llTableHead").innerHTML += "<th>" + terminals[i] + "</th>";
@@ -218,10 +219,16 @@ function displayTable() {
       "</td>";
 
     for (var j in terminals) {
-      s += '<td nowrap="nowrap">' + emptyIfUndefined(ruleTable[nonterminal][terminals[j]]) + "</td>";
+      s +=
+        '<td nowrap="nowrap">' +
+        emptyIfUndefined(ruleTable[nonterminal][terminals[j]]) +
+        "</td>";
     }
 
-    s += '<td nowrap="nowrap">' + emptyIfUndefined(ruleTable[nonterminal]["$"]) + "</td>";
+    s +=
+      '<td nowrap="nowrap">' +
+      emptyIfUndefined(ruleTable[nonterminal]["$"]) +
+      "</td>";
 
     s += "</tr>";
 
@@ -257,7 +264,8 @@ function makeRuleTable() {
         if (oldTableRule == undefined) {
           ruleTable[nonterminal][symbol] = rules[i].trim();
         } else {
-          ruleTable[nonterminal][symbol] = oldTableRule + "<br>" + rules[i].trim();
+          ruleTable[nonterminal][symbol] =
+            oldTableRule + "<br>" + rules[i].trim();
         }
       } else {
         for (var j in follows[nonterminal]) {
@@ -272,7 +280,8 @@ function makeRuleTable() {
           if (oldTableRule == undefined) {
             ruleTable[nonterminal][symbol2] = rules[i].trim();
           } else {
-            ruleTable[nonterminal][symbol2] = oldTableRule + "<br>" + rules[i].trim();
+            ruleTable[nonterminal][symbol2] =
+              oldTableRule + "<br>" + rules[i].trim();
           }
         }
       }
@@ -344,15 +353,12 @@ function collectFirsts4(development, nonterminalFirsts) {
       var first = firsts[symbol][k];
 
       epsilonInSymbolFirsts |= first == EPSILON;
-      if (first==EPSILON && j+1==development.length){
-
+      if (first == EPSILON && j + 1 == development.length) {
         result |= addUnique(first, nonterminalFirsts);
-      }else if(first !==EPSILON){
-
+      } else if (first !== EPSILON) {
         result |= addUnique(first, nonterminalFirsts);
       }
       // result |= addUnique(first, nonterminalFirsts);
-      
     }
 
     if (!epsilonInSymbolFirsts) {
@@ -389,17 +395,16 @@ function collectFirsts3(sequence) {
       var first = firsts[symbol][k];
 
       epsilonInSymbolFirsts |= first == EPSILON;
-      if (first==EPSILON && j+1==sequence.length){
-
+      if (first == EPSILON && j + 1 == sequence.length) {
         addUnique(first, result);
-      }else if(first !==EPSILON){
-
+      } else if (first !== EPSILON) {
         addUnique(first, result);
       }
       // addUnique(first, result);
     }
 
-    epsilonInSymbolFirsts |= firsts[symbol] == undefined || firsts[symbol].length == 0;
+    epsilonInSymbolFirsts |=
+      firsts[symbol] == undefined || firsts[symbol].length == 0;
 
     if (!epsilonInSymbolFirsts) {
       break;
@@ -453,7 +458,9 @@ function collectFollows() {
             symbolFollows = [];
           }
 
-          var afterSymbolFirsts = collectFirsts3(development.slice(parseInt(j) + 1));
+          var afterSymbolFirsts = collectFirsts3(
+            development.slice(parseInt(j) + 1)
+          );
 
           for (var k in afterSymbolFirsts) {
             var first = afterSymbolFirsts[k];
@@ -594,31 +601,35 @@ function parseInput() {
     } else {
       if (isElement(stackTop, nonterminals)) {
         rule = ruleTable[stackTop][symbol];
-        if (rule !== undefined) {
-          if (rule.includes("<br>")) {
-            // let temp_rule = rule.split("<br>");
-            // // temp_rule.forEach(r=>{
-            // //   if(!r.includes(EPSILON)){
-            // //     rule=r;
-            // //   }
-            // // })
-            // rule = temp_rule[1];
-            break
-          }
+        if (rule == undefined) {
+          ok = false;
+          break;
+        }
+        if (rule.includes("<br>")) {
+          //here
+          let temp_rule = rule.split("<br>");
+          temp_rule.forEach((r) => {
+            if (!r.includes(EPSILON)) {
+              rule = r;
+            }
+          });
+          rule = temp_rule[1];
+          //to here
+          // break;
         }
         var node = new Object();
         node.label = stackTop;
         node.children = [];
         parents.pop().children.push(node);
 
-        if (rule == undefined) {
-          ok = false;
-          break;
-        }
-
         stack.pop();
 
-        var reverseDevelopment = rule.split("->")[1].trim().split(" ").slice(0).reverse();
+        var reverseDevelopment = rule
+          .split("->")[1]
+          .trim()
+          .split(" ")
+          .slice(0)
+          .reverse();
 
         for (var j in reverseDevelopment) {
           parents.push(node);
@@ -633,10 +644,10 @@ function parseInput() {
         ok = false;
         break;
       }
-      if(stack.length==1 || input.length==1){
-        ok=true;
-      }else{
-        ok=false
+      if (stack.length == 1 || input.length == 0) {
+        ok = true;
+      } else {
+        ok = false;
       }
     }
 
@@ -652,7 +663,8 @@ function parseInput() {
 
   $element("parsingTableRows").innerHTML = parsingRows;
 
-  $element("input").style.color = ok ? "green" : "red";
+  $element("input").style.backgroundColor = ok ? "green" : "red";
+  $element("input").style.color = "white";
 }
 
 function toString(tree) {
